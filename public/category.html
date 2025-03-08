@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Danh mục</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: auto; text-align: center; }
+        table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #007BFF; color: white; }
+        .navigation { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Quản lý Danh mục</h2>
+        <input type="text" id="categoryName" placeholder="Tên danh mục">
+        <button onclick="addCategory()">Thêm</button>
+        
+        <table id="categoryTable">
+            <tr>
+                <th>Tên danh mục</th>
+                <th>Hành động</th>
+            </tr>
+        </table>
+
+        <div class="navigation">
+            <button onclick="window.location.href='product.html'">Chuyển đến Quản lý Sản phẩm</button>
+        </div>
+    </div>
+
+    <script>
+        let editIndex = -1;
+        document.addEventListener("DOMContentLoaded", loadCategories);
+        
+        function addCategory() {
+            let name = document.getElementById("categoryName").value.trim();
+            if (!name) {
+                alert("Vui lòng nhập tên danh mục!");
+                return;
+            }
+            let categories = JSON.parse(localStorage.getItem("categories")) || [];
+            if (editIndex === -1) {
+                // Thêm mới danh mục
+                categories.push(name);
+            } else {
+                // Cập nhật danh mục đã chọn
+                categories[editIndex] = name;
+                editIndex = -1;
+                document.getElementById("addBtn").textContent = "Thêm";
+            }
+            categories.push(name);
+            localStorage.setItem("categories", JSON.stringify(categories));
+            document.getElementById("categoryName").value = ""; //reset ô đã nhập
+            loadCategories();
+        }
+
+        function loadCategories() {
+            let categoryTable = document.getElementById("categoryTable");
+            let categories = JSON.parse(localStorage.getItem("categories")) || [];
+            categoryTable.innerHTML = `
+                <tr>
+                    <th>Tên danh mục</th>
+                    <th>Hành động</th>
+                </tr>
+            `;
+            categories.forEach((category, index) => {
+                let row = categoryTable.insertRow();
+                row.insertCell(0).textContent = category;
+
+                // Nút sửa
+                let editBtn = document.createElement("button");
+                editBtn.textContent = "Sửa";
+                editBtn.onclick = function() { editCategory(index); };
+
+                // Nút xóa
+                let deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Xóa";
+                deleteBtn.onclick = function() { deleteCategory(index); };
+
+                let actionCell = row.insertCell(1);
+                actionCell.appendChild(editBtn);
+                actionCell.appendChild(deleteBtn);
+            });
+        }
+        
+        function editCategory(index) {
+            let categories = JSON.parse(localStorage.getItem("categories"));
+            document.getElementById("categoryName").value = categories[index];
+            editIndex = index;
+            document.getElementById("addBtn").textContent = "Cập nhật";
+        }
+        
+        function deleteCategory(index) {
+            let categories = JSON.parse(localStorage.getItem("categories"));
+            categories.splice(index, 1);
+            localStorage.setItem("categories", JSON.stringify(categories));
+            loadCategories();
+        }
+    </script>
+</body>
+</html>
