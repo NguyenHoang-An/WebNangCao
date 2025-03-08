@@ -8,7 +8,7 @@ const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 // Phục vụ file tĩnh từ thư mục "public"
 app.use(express.static(path.join(__dirname, "public")));
