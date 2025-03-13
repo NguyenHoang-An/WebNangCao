@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-500 text-white p-4 text-center">
+        <h1 class="text-2xl font-bold"><%= product.name %></h1>
+        <nav class="mt-2">
+            <a href="/" class="px-4">Trang chủ</a>
+            <a href="/products" class="px-4">Sản phẩm</a>
+            <a href="/cart" class="px-4">Giỏ hàng</a>
+        </nav>
+    </header>
+    <main class="container mx-auto mt-10 p-5 bg-white shadow-lg rounded-lg">
+        <img src="<%= product.image %>" alt="<%= product.name %>" class="w-64 h-64 object-cover mx-auto rounded-lg">
+        <p class="mt-4 text-gray-700"><strong>Mô tả:</strong> <%= product.description %></p>
+        <p class="text-gray-700"><strong>Giá:</strong> <%= product.price %> VND</p>
+        <p class="text-gray-700"><strong>Danh mục:</strong> <%= product.category.name %></p>
+        <button class="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600" onclick="addToCart('<%= product._id %>')">
+            Thêm vào giỏ hàng
+        </button>
+    </main>
+    <script>
+        function addToCart(productId) {
+            fetch('/api/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId })
+            }).then(response => response.json())
+              .then(data => alert(data.message));
+        }
+    </script>
+</body>
+</html>

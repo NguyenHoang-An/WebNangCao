@@ -1,12 +1,12 @@
-const mongoose = require('mongoose'); // Thêm dòng này để import mongoose
+const mongoose = require("mongoose");
 
 const ProductSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: String,
-    price: Number,
-    categories_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
-    images: [String],
-    show: Boolean
+  name: { type: String, required: true },
+  description: { type: String },
+  price: { type: Number, required: true },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+  image: { type: String },
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model("Product", ProductSchema);

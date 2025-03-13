@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-500 text-white p-4 text-center">
+        <h1 class="text-2xl font-bold">Giỏ hàng</h1>
+        <nav class="mt-2">
+            <a href="/" class="px-4">Trang chủ</a>
+            <a href="/products" class="px-4">Sản phẩm</a>
+            <a href="/cart" class="px-4">Giỏ hàng</a>
+        </nav>
+    </header>
+    <main class="container mx-auto mt-10 p-5 bg-white shadow-lg rounded-lg">
+        <% if (products.length > 0) { %>
+            <ul class="space-y-4">
+                <% products.forEach(product => { %>
+                    <li class="flex items-center justify-between p-4 border rounded-lg shadow-md bg-gray-50">
+                        <div>
+                            <h2 class="text-lg font-semibold"><%= product.name %></h2>
+                            <p class="text-gray-700">Giá: <%= product.price %> VND</p>
+                        </div>
+                        <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="removeFromCart('<%= product._id %>')">
+                            Xóa
+                        </button>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p class="text-center text-gray-500">Giỏ hàng của bạn đang trống.</p>
+        <% } %>
+    </main>
+    <script>
+        function removeFromCart(productId) {
+            fetch('/api/cart/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId })
+            }).then(response => response.json())
+              .then(data => location.reload());
+        }
+    </script>
+</body>
+</html>

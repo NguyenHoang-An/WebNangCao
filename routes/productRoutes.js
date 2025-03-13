@@ -1,12 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { createProduct, getProducts, updateProduct, deleteProduct, searchProductByName, getProductsByCategory } = require('../controllers/productController');
+const productController = require("../controllers/productController");
 
-router.post('/', createProduct);
-router.get('/', getProducts);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
-router.get('/search', searchProductByName);
-router.get('/category/:categoryId', getProductsByCategory);
+// Định nghĩa các route cho sản phẩm
+router.get("/", productController.getProducts);
+router.post("/", productController.createProduct);
+router.put("/:id", productController.updateProduct);
+router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;

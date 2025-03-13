@@ -1,55 +1,47 @@
-const Product = require('../models/Product');
-exports.createProduct = async (req, res) => {
-    try {
-        const product = new Product(req.body);
-        await product.save();
-        res.status(201).json(product);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
+const Product = require("../models/Product");
 
-exports.updateProduct = async (req, res) => {
-    try {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(product);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-exports.deleteProduct = async (req, res) => {
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Product deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
+// Lấy danh sách sản phẩm
 exports.getProducts = async (req, res) => {
-    try {
-        const products = await Product.find().populate('categories_id');
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+    const products = await Product.find().populate("category");
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách sản phẩm", error });
+  }
 };
 
-exports.searchProductByName = async (req, res) => {
-    try {
-        const products = await Product.find({ name: new RegExp(req.query.name, 'i') });
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// Tạo sản phẩm mới
+exports.createProduct = async (req, res) => {
+  try {
+    const { name, description, price, category, image } = req.body;
+    const newProduct = new Product({ name, description, price, category, image });
+    await newProduct.save();
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi tạo sản phẩm", error });
+  }
 };
 
-exports.getProductsByCategory = async (req, res) => {
-    try {
-        const products = await Product.find({ categories_id: req.params.categoryId });
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// Cập nhật sản phẩm
+exports.updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedProduct) return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi cập nhật sản phẩm", error });
+  }
+};
+
+// Xóa sản phẩm
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+    res.status(200).json({ message: "Đã xóa sản phẩm thành công" });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi xóa sản phẩm", error });
+  }
 };

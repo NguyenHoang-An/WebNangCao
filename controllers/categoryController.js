@@ -1,47 +1,47 @@
-const Category = require('../models/Category');
-const Product = require('../models/Product');
+const Category = require("../models/Category");
 
-exports.createCategory = async (req, res) => {
-    try {
-        const category = new Category(req.body);
-        await category.save();
-        res.status(201).json(category);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-exports.updateCategory = async (req, res) => {
-    try {
-        const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(category);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-exports.deleteCategory = async (req, res) => {
-    try {
-        const products = await Product.find({ categories_id: req.params.id });
-        const subCategories = await Category.find({ parent_category_id: req.params.id });
-        
-        if (products.length > 0 || subCategories.length > 0) {
-            return res.status(400).json({ error: 'Cannot delete category with products or subcategories' });
-        }
-
-        await Category.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Category deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
+// Lấy danh sách danh mục
 exports.getCategories = async (req, res) => {
-    try {
-        const categories = await Category.find().populate('parent_category_id');
-        res.json(categories);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+  try {
+    const categories = await Category.find();
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách danh mục", error });
+  }
 };
 
+// Tạo danh mục mới
+exports.createCategory = async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const newCategory = new Category({ name, description });
+    await newCategory.save();
+    res.status(201).json(newCategory);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi tạo danh mục", error });
+  }
+};
+
+// Cập nhật danh mục
+exports.updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedCategory = await Category.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedCategory) return res.status(404).json({ message: "Không tìm thấy danh mục" });
+    res.status(200).json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi cập nhật danh mục", error });
+  }
+};
+
+// Xóa danh mục
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedCategory = await Category.findByIdAndDelete(id);
+    if (!deletedCategory) return res.status(404).json({ message: "Không tìm thấy danh mục" });
+    res.status(200).json({ message: "Đã xóa danh mục thành công" });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi xóa danh mục", error });
+  }
+};

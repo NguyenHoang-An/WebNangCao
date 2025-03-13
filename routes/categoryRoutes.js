@@ -1,11 +1,11 @@
 const express = require("express");
-const { createCategory, getCategories, updateCategory, deleteCategory } = require("../controllers/categoryController");
-
 const router = express.Router();
+const categoryController = require("../controllers/categoryController");
 
-router.post("/", createCategory);
-router.get("/", getCategories);
-router.put("/:id", updateCategory);
-router.delete("/:id", deleteCategory);
+// Định nghĩa các route cho danh mục
+router.get("/", categoryController.getCategories);
+router.post("/", categoryController.createCategory);
+router.put("/:id", categoryController.updateCategory);
+router.delete("/:id", categoryController.deleteCategory);
 
 module.exports = router;
